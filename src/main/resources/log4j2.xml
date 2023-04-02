@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="FILE_NAME">Loan-Application</Property>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="LOG_PATTERN">
+            %d{dd MMM yyyy HH:mm:ss} [%t] %-5p %c %x - %m%n
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <RollingFile name="InfoFile" fileName="${LOG_DIR}/${FILE_NAME}-info.log"
+                     filePattern="${LOG_DIR}/${FILE_NAME}-info-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+        </RollingFile>
+        <RollingFile name="ErrorFile" fileName="${LOG_DIR}/${FILE_NAME}-error.log"
+                     filePattern="${LOG_DIR}/${FILE_NAME}-error-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="90"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.task.loanapp" level="INFO" additivity="false">
+        </Logger>
+
+        <Root level="WARN">
+            <AppenderRef ref="InfoFile" />
+            <AppenderRef ref="ErrorFile" level="ERROR" />
+        </Root>
+    </Loggers>
+</Configuration>
