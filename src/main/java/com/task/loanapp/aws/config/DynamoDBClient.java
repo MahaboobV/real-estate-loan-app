@@ -9,6 +9,7 @@ import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRep
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.task.loanapp.repository")
@@ -25,11 +26,23 @@ public class DynamoDBClient {
     @Value("${aws.dynamodb.endpoint}")
     private String endpoint;
 
-    @Bean
-    public AmazonDynamoDB amazonDynamoDB() {
+  @Bean
+  @Profile("local")
+    public AmazonDynamoDB amazonDynamoDBlocal() {
         final BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
         return AmazonDynamoDBClientBuilder
                 .standard().withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region))
+                .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
+                .build();
+
+    }
+
+    @Bean
+    @Profile("aws")
+    public AmazonDynamoDB amazonDynamoDB() {
+        final BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
+        return AmazonDynamoDBClientBuilder
+                .standard()
                 .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
                 .build();
 
